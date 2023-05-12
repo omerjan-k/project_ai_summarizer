@@ -12,7 +12,8 @@ const Demo = () => {
   const [copied, setCopied] = useState("");
 
   // RTK lazy query
-  const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery();
+ // const [getSummary, { error, isFetching }] = useGetSummaryQuery();
+    const [getSummary, {error, isFetching} ] = useLazyGetSummaryQuery(article.url);
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -25,17 +26,11 @@ const Demo = () => {
     }
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
-    const existingArticle = allArticles.find(
-      (item) => item.url === article.url
-    );
-
-    if (existingArticle) return setArticle(existingArticle);
-
-    const { data } = await getSummary({ articleUrl: article.url });
-    if (data?.summary) {
+     const { data } = await getSummary( article.url);
+    if (data) {
       const newArticle = { ...article, summary: data.summary };
       const updatedAllArticles = [newArticle, ...allArticles];
 
@@ -133,7 +128,12 @@ const Demo = () => {
               </h2>
               <div className='summary_box'>
                 <p className='font-inter font-medium text-sm text-gray-700'>
-                  {article.summary}
+                  {article.summary.map((element, index) =>{
+                    return (
+                    <ol className="space-y-20">
+                     <li> <b className="text-red-600">{index+1}.</b>  {element} </li>  
+                    </ol>)
+                  })}
                 </p>
               </div>
             </div>
